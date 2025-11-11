@@ -1,4 +1,4 @@
-YPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -221,12 +221,6 @@ YPE html>
             e.preventDefault();
             hideMessage();
             setLoading(true);
-
-            if (GOOGLE_SCRIPT_URL === "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE") {
-                showMessage('error', '⚠️ 請先將 Google Apps Script 部署完成，並將 URL 替換到程式碼中！ (資料未送出)');
-                setLoading(false);
-                return;
-            }
 
             // Collect form data
             const formData = new FormData(form);
