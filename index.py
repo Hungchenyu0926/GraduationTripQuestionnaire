@@ -141,7 +141,7 @@ YPE html>
     <script>
         // Placeholder URL for your deployed Google Apps Script Web App
         // IMPORTANT: REPLACE THIS WITH YOUR ACTUAL DEPLOYED SCRIPT URL!
-        const GOOGLE_SCRIPT_URL = "Yhttps://script.google.com/macros/s/AKfycbzOFqPnLWT2q-ri6_HdS-URNp_zh1EdNvHbaLo5fCY9OzNrOgD4cR8bg8zM0kQtGSc/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzOFqPnLWT2q-ri6_HdS-URNp_zh1EdNvHbaLo5fCY9OzNrOgD4cR8bg8zM0kQtGSc/exec"; 
         
         const form = document.getElementById('travelForm');
         const otherTimeOption = document.getElementById('otherTimeOption');
