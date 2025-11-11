@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 研所同學國內畢旅意願調查 ✈️</title>
+    <!-- Load Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        /* Custom message box styles */
+        #messageBox {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 min-h-screen flex items-center justify-center">
+
+    <div class="w-full max-w-2xl bg-white shadow-2xl rounded-xl p-6 sm:p-10 border-t-8 border-indigo-500">
+        <!-- Header Section -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-indigo-700 mb-2">
+                🎓 研所同學國內畢旅意願調查 ✈️
+            </h1>
+            <p class="text-gray-600 leading-relaxed text-sm sm:text-base">
+                同學好～針對國內畢業旅行，想聽聽同學願望，**不記名投票**。盡量可以滿足大家許可時間和想去的地點。歡迎攜家帶眷共襄盛舉。
+            </p>
+            <p class="mt-2 text-sm font-semibold text-red-500">
+                ⚠️ 調查時間到 11/30 截止！
+            </p>
+        </header>
+
+        <!-- Form Section -->
+        <form id="travelForm" class="space-y-6">
+
+            <!-- Message Box for Success/Error -->
+            <div id="messageBox" class="p-4 rounded-lg text-sm hidden opacity-0 transition-opacity" role="alert"></div>
+
+
+            <!-- Question 1: Location -->
+            <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                <label for="location" class="block text-lg font-bold text-gray-800 mb-3">
+                    1. 夢想中的國內旅遊地點是？ (簡答)
+                </label>
+                <input type="text" id="location" name="地點" required
+                       placeholder="例如：花蓮太魯閣、墾丁、澎湖..."
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+            </div>
+
+            <!-- Question 2: Duration -->
+            <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                <p class="block text-lg font-bold text-gray-800 mb-3">
+                    2. 偏好的旅行天數？ (二選一)
+                </p>
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-6">
+                    <label class="inline-flex items-center text-gray-700 cursor-pointer">
+                        <input type="radio" name="天數" value="兩天一夜" required
+                               class="form-radio h-5 w-5 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                        <span class="ml-3 text-base">兩天一夜 (2D1N)</span>
+                    </label>
+                    <label class="inline-flex items-center text-gray-700 cursor-pointer">
+                        <input type="radio" name="天數" value="三天兩夜"
+                               class="form-radio h-5 w-5 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                        <span class="ml-3 text-base">三天兩夜 (3D2N)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 3: Time Options -->
+            <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                <p class="block text-lg font-bold text-gray-800 mb-3">
+                    3. 方便的旅遊時間選項？ (請選擇最合適的一項)
+                </p>
+                <div class="space-y-3">
+                    <!-- Radio options for Time -->
+                    <label class="flex items-center text-gray-700 cursor-pointer">
+                        <input type="radio" name="時間" value="5月第一週 (勞動節)" required
+                               class="time-option form-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500">
+                        <span class="ml-3 text-base">5月第一週 (勞動節)</span>
+                    </label>
+                    <label class="flex items-center text-gray-700 cursor-pointer">
+                        <input type="radio" name="時間" value="5月第二週"
+                               class="time-option form-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500">
+                        <span class="ml-3 text-base">5月第二週</span>
+                    </label>
+                    <label class="flex items-center text-gray-700 cursor-pointer">
+                        <input type="radio" name="時間" value="5月第三週"
+                               class="time-option form-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500">
+                        <span class="ml-3 text-base">5月第三週</span>
+                    </label>
+                    <label class="flex items-center text-gray-700 cursor-pointer">
+                        <input type="radio" name="時間" value="5月第四週"
+                               class="time-option form-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500">
+                        <span class="ml-3 text-base">5月第四週</span>
+                    </label>
+                    <label class="flex items-center text-gray-700 cursor-pointer">
+                        <input type="radio" name="時間" value="時間都可以"
+                               class="time-option form-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500">
+                        <span class="ml-3 text-base">時間都可以</span>
+                    </label>
+                    <label class="flex items-center text-gray-700 cursor-pointer">
+                        <input type="radio" name="時間" value="其他時間" id="otherTimeOption"
+                               class="time-option form-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500">
+                        <span class="ml-3 text-base">其他時間</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 4: Other Time Details (Conditional) -->
+            <div id="otherTimeDetail" class="bg-yellow-50 p-5 rounded-lg border border-yellow-200 hidden transition-all duration-300">
+                <label for="otherTimeText" class="block text-lg font-bold text-gray-800 mb-3">
+                    4. 請簡答您方便的「其他時間」：
+                </label>
+                <input type="text" id="otherTimeText" name="其他時間說明"
+                       placeholder="請具體說明您的時間，例如：6月第二週末"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 transition duration-150">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitButton"
+                    class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition duration-200 ease-in-out shadow-lg focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center justify-center disabled:bg-gray-400"
+                    disabled>
+                <span id="buttonText">送出問卷 (匿名)</span>
+                <svg id="loadingSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </form>
+
+        <footer class="mt-6 text-center text-gray-400 text-xs">
+            感謝您的填寫，期待我們能共同創造美好的畢業旅程回憶！
+        </footer>
+
+    </div>
+
+    <script>
+        // Placeholder URL for your deployed Google Apps Script Web App
+        // IMPORTANT: REPLACE THIS WITH YOUR ACTUAL DEPLOYED SCRIPT URL!
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzOFqPnLWT2q-ri6_HdS-URNp_zh1EdNvHbaLo5fCY9OzNrOgD4cR8bg8zM0kQtGSc/exec"; 
+        
+        const form = document.getElementById('travelForm');
+        const otherTimeOption = document.getElementById('otherTimeOption');
+        const otherTimeDetail = document.getElementById('otherTimeDetail');
+        const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const messageBox = document.getElementById('messageBox');
+        
+        // --- Utility Functions ---
+        
+        // Function to show a custom message box
+        function showMessage(type, message) {
+            messageBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            messageBox.classList.add(type === 'success' ? 'bg-green-100' : 'bg-red-100', type === 'success' ? 'text-green-800' : 'text-red-800');
+            messageBox.innerHTML = message;
+            // Force reflow for transition to work
+            void messageBox.offsetWidth; 
+            messageBox.classList.remove('opacity-0');
+        }
+
+        // Function to hide the message box
+        function hideMessage() {
+            messageBox.classList.add('opacity-0');
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 300); // Match transition duration
+        }
+
+        // Function to set loading state
+        function setLoading(isLoading) {
+            submitButton.disabled = isLoading;
+            if (isLoading) {
+                buttonText.textContent = '資料送出中...';
+                loadingSpinner.classList.remove('hidden');
+            } else {
+                buttonText.textContent = '送出問卷 (匿名)';
+                loadingSpinner.classList.add('hidden');
+            }
+        }
+
+        // --- Event Listeners and Logic ---
+
+        // Check form validity and enable submit button
+        form.addEventListener('input', () => {
+            hideMessage();
+            // Enable button only if all required fields are filled (browser handles required)
+            submitButton.disabled = !form.checkValidity();
+        });
+
+        // Toggle visibility of the "Other Time" text field
+        document.querySelectorAll('.time-option').forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (otherTimeOption.checked) {
+                    otherTimeDetail.classList.remove('hidden');
+                    otherTimeDetail.classList.add('block');
+                    document.getElementById('otherTimeText').required = true;
+                } else {
+                    otherTimeDetail.classList.add('hidden');
+                    otherTimeDetail.classList.remove('block');
+                    document.getElementById('otherTimeText').required = false;
+                    document.getElementById('otherTimeText').value = ''; // Clear if hidden
+                }
+                submitButton.disabled = !form.checkValidity();
+            });
+        });
+        
+        // Initial check for 'otherTimeOption' on page load
+        if (otherTimeOption.checked) {
+            otherTimeDetail.classList.remove('hidden');
+            otherTimeDetail.classList.add('block');
+        }
+
+
+        // Handle Form Submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideMessage();
+            setLoading(true);
+
+            // Collect form data
+            const formData = new FormData(form);
+            const data = {};
+            
+            // Convert FormData to a simple object
+            for (let [key, value] of formData.entries()) {
+                // Ensure the "其他時間說明" only gets sent if "其他時間" was selected
+                if (key === '其他時間說明' && data['時間'] !== '其他時間') {
+                    continue; 
+                }
+                data[key] = value.trim();
+            }
+
+            // Add Submission Timestamp
+            data['填寫時間'] = new Date().toLocaleString('zh-TW', { 
+                year: 'numeric', month: '2-digit', day: '2-digit', 
+                hour: '2-digit', minute: '2-digit', second: '2-digit', 
+                hour12: false 
+            });
+
+
+            try {
+                // Use fetch to post data to the Google Apps Script endpoint
+                // Note: The 'redirect' mode is necessary for Google Apps Script to work correctly
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Essential for successful Apps Script communication
+                    cache: 'no-cache',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    // Convert JSON data to URL-encoded format
+                    body: new URLSearchParams(data).toString(),
+                });
+
+                // Since we use 'no-cors', we cannot inspect the response, but if fetch completes, we assume success.
+                // A better approach would be to use fetch and handle the JSON response, but 'no-cors' is the easiest setup for new users.
+                
+                showMessage('success', '✅ 感謝您的填寫！問卷資料已成功送出。');
+                form.reset();
+                otherTimeDetail.classList.add('hidden'); // Hide conditional field
+                document.getElementById('otherTimeText').required = false;
+                submitButton.disabled = true; // Disable button after successful submission
+
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                showMessage('error', '❌ 資料送出失敗，請檢查網路連線或稍後再試。');
+            } finally {
+                setLoading(false);
+            }
+        });
+    </script>
+</body>
+</html>
