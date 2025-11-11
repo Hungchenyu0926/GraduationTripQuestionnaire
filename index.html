@@ -40,7 +40,7 @@
             <!-- Message Box for Success/Error -->
             <div id="messageBox" class="p-4 rounded-lg text-sm hidden opacity-0 transition-opacity" role="alert"></div>
 
-            <!-- NEW Question 1: Name -->
+            <!-- Question 1: Name -->
             <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
                 <label for="name" class="block text-lg font-bold text-gray-800 mb-3">
                     1. 您的名字？
@@ -50,7 +50,7 @@
                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
             </div>
 
-            <!-- Question 2: Location (Original Q1) -->
+            <!-- Question 2: Location -->
             <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
                 <label for="location" class="block text-lg font-bold text-gray-800 mb-3">
                     2. 願望國內旅遊地點是？ (簡答)
@@ -59,11 +59,21 @@
                        placeholder="例如：宜蘭太平山、司馬庫斯、武陵農場等..."
                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
             </div>
+            
+            <!-- NEW Question 3: Reference URL/Itinerary -->
+            <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                <label for="reference" class="block text-lg font-bold text-gray-800 mb-3">
+                    3. 參考網址/行程建議？ (選填)
+                </label>
+                <input type="text" id="reference" name="參考網址/行程"
+                       placeholder="提供參考網址或簡述您想去的行程（例如：Day1....Day2....）"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+            </div>
 
-            <!-- Question 3: Duration (Original Q2) -->
+            <!-- Question 4: Duration (Original Q3) -->
             <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
                 <p class="block text-lg font-bold text-gray-800 mb-3">
-                    3. 偏好的旅行天數？ (二選一)
+                    4. 偏好的旅行天數？ (二選一)
                 </p>
                 <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-6">
                     <label class="inline-flex items-center text-gray-700 cursor-pointer">
@@ -79,10 +89,10 @@
                 </div>
             </div>
 
-            <!-- Question 4: Time Options (Original Q3) -->
+            <!-- Question 5: Time Options (Original Q4) -->
             <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
                 <p class="block text-lg font-bold text-gray-800 mb-3">
-                    4. 方便的旅遊時間選項？ (請選擇最合適的一項)
+                    5. 方便的旅遊時間選項？ (請選擇最合適的一項)
                 </p>
                 <div class="space-y-3">
                     <!-- Radio options for Time -->
@@ -119,10 +129,10 @@
                 </div>
             </div>
 
-            <!-- Question 5: Other Time Details (Original Q4, Conditional) -->
+            <!-- Question 6: Other Time Details (Original Q5, Conditional) -->
             <div id="otherTimeDetail" class="bg-yellow-50 p-5 rounded-lg border border-yellow-200 hidden transition-all duration-300">
                 <label for="otherTimeText" class="block text-lg font-bold text-gray-800 mb-3">
-                    5. 請簡答您方便的「其他時間」：
+                    6. 請簡答您方便的「其他時間」：
                 </label>
                 <input type="text" id="otherTimeText" name="其他時間說明"
                        placeholder="請具體說明您的時間，例如：6月第二週末"
@@ -150,8 +160,7 @@
     <script>
         // Placeholder URL for your deployed Google Apps Script Web App
         // IMPORTANT: REPLACE THIS WITH YOUR ACTUAL DEPLOYED SCRIPT URL!
-        // (Assuming you've replaced this with your actual URL from the previous step)
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1TJ4AgdAhhtg33Z9qN9SlY78ZshoWL2HKb8mkj71psrTHORwGRn1zI5qjR3Sbwk0N5w/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzOFqPnLWT2q-ri6_HdS-URNp_zh1EdNvHbaLo5fCY9OzNrOgD4cR8bg8zM0kQtGSc/exec"; 
         
         const form = document.getElementById('travelForm');
         const otherTimeOption = document.getElementById('otherTimeOption');
@@ -208,7 +217,6 @@
                 if (otherTimeOption.checked) {
                     otherTimeDetail.classList.remove('hidden');
                     otherTimeDetail.classList.add('block');
-                    // Question 5 (Other Time Details) is now conditionally required
                     document.getElementById('otherTimeText').required = true; 
                 } else {
                     otherTimeDetail.classList.add('hidden');
@@ -283,6 +291,7 @@
     </script>
 </body>
 </html>
+
 
 
 
