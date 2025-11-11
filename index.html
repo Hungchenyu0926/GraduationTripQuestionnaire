@@ -27,7 +27,7 @@
                 🎓 國內畢旅許願調查 ✈️
             </h1>
             <p class="text-gray-600 leading-relaxed text-sm sm:text-base">
-                同學好～針對國內畢業旅行，想聽聽同學願望，**不記名投票**。盡量可以滿足大家許可時間和想去的地點。歡迎攜家帶眷共襄盛舉。
+                同學好～針對國內畢業旅行，想聽聽同學願望。盡量可以滿足大家許可時間和想去的地點。歡迎攜家帶眷共襄盛舉。
             </p>
             <p class="mt-2 text-sm font-semibold text-red-500">
                 ⚠️ 調查時間到 11/30 截止！
@@ -40,21 +40,30 @@
             <!-- Message Box for Success/Error -->
             <div id="messageBox" class="p-4 rounded-lg text-sm hidden opacity-0 transition-opacity" role="alert"></div>
 
-
-            <!-- Question 1: Location -->
+            <!-- NEW Question 1: Name -->
             <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
-                <label for="location" class="block text-lg font-bold text-gray-800 mb-3">
-                    1. 許願的國內旅遊地點是？ (簡答)
+                <label for="name" class="block text-lg font-bold text-gray-800 mb-3">
+                    1. 您的名字？
                 </label>
-                <input type="text" id="location" name="地點" required
-                       placeholder="例如：宜蘭太平山、司馬庫斯、武陵農場..."
+                <input type="text" id="name" name="名字"
+                       placeholder="例如：王小明"
                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
             </div>
 
-            <!-- Question 2: Duration -->
+            <!-- Question 2: Location (Original Q1) -->
+            <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                <label for="location" class="block text-lg font-bold text-gray-800 mb-3">
+                    2. 願望國內旅遊地點是？ (簡答)
+                </label>
+                <input type="text" id="location" name="地點" required
+                       placeholder="例如：宜蘭太平山、司馬庫斯、武陵農場等..."
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+            </div>
+
+            <!-- Question 3: Duration (Original Q2) -->
             <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
                 <p class="block text-lg font-bold text-gray-800 mb-3">
-                    2. 偏好的旅行天數？ (二選一)
+                    3. 偏好的旅行天數？ (二選一)
                 </p>
                 <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-6">
                     <label class="inline-flex items-center text-gray-700 cursor-pointer">
@@ -70,10 +79,10 @@
                 </div>
             </div>
 
-            <!-- Question 3: Time Options -->
+            <!-- Question 4: Time Options (Original Q3) -->
             <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
                 <p class="block text-lg font-bold text-gray-800 mb-3">
-                    3. 方便的旅遊時間選項？ (請選擇最合適的一項)
+                    4. 方便的旅遊時間選項？ (請選擇最合適的一項)
                 </p>
                 <div class="space-y-3">
                     <!-- Radio options for Time -->
@@ -110,10 +119,10 @@
                 </div>
             </div>
 
-            <!-- Question 4: Other Time Details (Conditional) -->
+            <!-- Question 5: Other Time Details (Original Q4, Conditional) -->
             <div id="otherTimeDetail" class="bg-yellow-50 p-5 rounded-lg border border-yellow-200 hidden transition-all duration-300">
                 <label for="otherTimeText" class="block text-lg font-bold text-gray-800 mb-3">
-                    4. 請簡答您方便的「其他時間」：
+                    5. 請簡答您方便的「其他時間」：
                 </label>
                 <input type="text" id="otherTimeText" name="其他時間說明"
                        placeholder="請具體說明您的時間，例如：6月第二週末"
@@ -141,6 +150,7 @@
     <script>
         // Placeholder URL for your deployed Google Apps Script Web App
         // IMPORTANT: REPLACE THIS WITH YOUR ACTUAL DEPLOYED SCRIPT URL!
+        // (Assuming you've replaced this with your actual URL from the previous step)
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzOFqPnLWT2q-ri6_HdS-URNp_zh1EdNvHbaLo5fCY9OzNrOgD4cR8bg8zM0kQtGSc/exec"; 
         
         const form = document.getElementById('travelForm');
@@ -198,7 +208,8 @@
                 if (otherTimeOption.checked) {
                     otherTimeDetail.classList.remove('hidden');
                     otherTimeDetail.classList.add('block');
-                    document.getElementById('otherTimeText').required = true;
+                    // Question 5 (Other Time Details) is now conditionally required
+                    document.getElementById('otherTimeText').required = true; 
                 } else {
                     otherTimeDetail.classList.add('hidden');
                     otherTimeDetail.classList.remove('block');
@@ -245,7 +256,6 @@
 
             try {
                 // Use fetch to post data to the Google Apps Script endpoint
-                // Note: The 'redirect' mode is necessary for Google Apps Script to work correctly
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors', // Essential for successful Apps Script communication
@@ -257,9 +267,6 @@
                     body: new URLSearchParams(data).toString(),
                 });
 
-                // Since we use 'no-cors', we cannot inspect the response, but if fetch completes, we assume success.
-                // A better approach would be to use fetch and handle the JSON response, but 'no-cors' is the easiest setup for new users.
-                
                 showMessage('success', '✅ 感謝您的填寫！問卷資料已成功送出。');
                 form.reset();
                 otherTimeDetail.classList.add('hidden'); // Hide conditional field
@@ -275,8 +282,8 @@
         });
     </script>
 </body>
-
 </html>
+
 
 
 
