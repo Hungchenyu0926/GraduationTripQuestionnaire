@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 畢業旅行意願統計結果</title>
+    <!-- Load Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+    </style>
+    <!-- Load Google Charts Library -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body class="p-4 sm:p-8 min-h-screen flex flex-col items-center">
+
+    <div class="w-full max-w-4xl bg-white shadow-2xl rounded-xl p-6 sm:p-10 border-t-8 border-green-500">
+        
+        <!-- Header -->
+        <header class="mb-10 text-center">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-green-700 mb-2">
+                📊 國內畢旅意願統計概覽
+            </h1>
+            <p id="totalSubmissions" class="text-gray-600 text-lg font-semibold"></p>
+        </header>
+
+        <!-- Loading Indicator / Error Message -->
+        <div id="statusMessage" class="flex justify-center items-center h-48">
+            <svg class="animate-spin h-8 w-8 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="ml-3 text-gray-500">正在載入統計數據...</span>
+        </div>
+
+        <!-- Chart Containers -->
+        <div id="chartContainers" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Duration Chart (Pie Chart) -->
+            <div class="bg-gray-50 p-6 rounded-lg shadow-lg border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">偏好的旅行天數 (天數)</h2>
+                <div id="duration_chart" class="h-80 w-full"></div>
+            </div>
+
+            <!-- Time Chart (Bar Chart) -->
+            <div class="bg-gray-50 p-6 rounded-lg shadow-lg border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">方便的旅遊時間選項 (時間)</h2>
+                <div id="time_chart" class="h-80 w-full"></div>
+            </div>
+            
+        </div>
+        
+        <!-- Raw Data Display Placeholder (Optional, for reference) -->
+        <div class="mt-8 pt-4 border-t border-gray-200">
+             <h2 class="text-xl font-bold text-gray-700 mb-3">地點許願列表 (前五名)</h2>
+             <ul id="location_list" class="space-y-1 text-gray-700">
+                 <!-- Location results will be inserted here -->
+             </ul>
+        </div>
+
+    </div>
+
+    <script>
+        // IMPORTANT: PLEASE USE THE SAME DEPLOYED GOOGLE APPS SCRIPT URL HERE
+        // 請務必替換成您的 Google Apps Script 執行網址 (結尾必須是 /exec)
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDrGqrypa3_2-eO8_sOK2rIt3-8WA9CIIKjcuZIVtHaEA6fnJ0p8lQqVOn7wB046bg/exec"; 
+
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', {'packages':['corechart', 'bar']});
+        
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(fetchAndDrawCharts);
+        
+        const statusMessage = document.getElementById('statusMessage');
+        const chartContainers = document.getElementById('chartContainers');
+        const totalSubmissionsElement = document.getElementById('totalSubmissions');
+
+        // Function to fetch data from the Apps Script GET endpoint (FIXED for non-JSON responses)
+        async function fetchData() {
+            // **FIX/Diagnostic: Check for /dev URL which causes "Failed to fetch"**
+            if (GOOGLE_SCRIPT_URL.endsWith("/dev")) {
+                statusMessage.innerHTML = '<span class="text-red-500 font-bold">❌ **部署 URL 錯誤：** 您目前使用的是 Google Apps Script 的 **/dev** 開發模式網址。此網址不支援公開存取，會導致「Failed to fetch」錯誤。<br>請務必使用**執行網址**（結尾為 **/exec**）並確認部署存取權為**「任何人」**。</span>';
+                return null;
+            }
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'GET' });
+                
+                // 讀取原始文字，避免直接使用 .json() 在非 JSON 響應時拋出錯誤
+                const rawText = await response.text();
+
+                // 檢查是否為錯誤訊息或非 JSON 的舊版回覆
+                if (!response.ok || rawText.startsWith("Error") || rawText.startsWith("This")) {
+                    console.error("伺服器回應非 JSON 或狀態非 200:", rawText);
+                    
+                    // 判斷是否為 Apps Script 的預設錯誤訊息 (根源：doGet未更新)
+                    if (rawText.startsWith("This endpoint only accepts POST requests.")) {
+                         statusMessage.innerHTML = '<span class="text-red-500 font-bold">❌ **伺服器設定錯誤：** Google Apps Script 尚未正確部署為 JSON API。<br>請確認您已將最新的 `Code.gs` 貼上並執行**重新部署**（存取權需設定為「任何人」）。</span>';
+                    } else {
+                         statusMessage.innerHTML = `<span class="text-red-500 font-bold">❌ 載入數據失敗。伺服器回應錯誤：${rawText.substring(0, 80)}...</span>`;
+                    }
+                    return null;
+                }
+                
+                // 嘗試解析 JSON
+                const data = JSON.parse(rawText); 
+                return data;
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                // This catch now handles generic fetch errors like CORS/network issues
+                statusMessage.innerHTML = '<span class="text-red-500 font-bold">❌ 載入數據失敗 (Failed to fetch)。這可能是由於 **CORS 權限問題** 或 **網路連線錯誤**。請再次確認 Apps Script 部署的存取權是否為**「任何人」**。</span>';
+                return null;
+            }
+        }
+
+        // Function to draw the charts
+        async function fetchAndDrawCharts() {
+            const data = await fetchData();
+            
+            if (!data || data.error) {
+                // statusMessage 已經在 fetchData 中處理
+                return;
+            }
+
+            statusMessage.classList.add('hidden');
+            chartContainers.classList.remove('hidden');
+            
+            totalSubmissionsElement.textContent = `（已收到 ${data.totalSubmissions} 份回覆）`;
+            
+            // --- 繪製天數圓餅圖 ---
+            drawDurationChart(data.duration);
+            
+            // --- 繪製時間長條圖 ---
+            drawTimeChart(data.time);
+            
+            // --- 繪製地點列表（簡化版，只顯示前五名） ---
+            // 由於 Apps Script 的 doGet 專注於天數和時間，地點需要額外處理
+            // 在這裡先顯示一個友善的提示，讓使用者知道如何查看地點
+            document.getElementById('location_list').innerHTML = 
+                 `<li class="text-base text-indigo-600 font-medium">請直接查看 Google Sheet 獲得完整「地點」和「參考網址/行程」的建議。</li>`;
+        }
+
+        function drawDurationChart(durationData) {
+            const dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('string', '天數');
+            dataTable.addColumn('number', '票數');
+            
+            // Convert count object to array of arrays
+            const rows = Object.entries(durationData);
+            dataTable.addRows(rows);
+
+            const options = {
+                title: '偏好的旅行天數分佈',
+                pieHole: 0.4,
+                legend: { position: 'bottom' },
+                colors: ['#3b82f6', '#f59e0b', '#ef4444', '#10b981'], // Tailwind-inspired colors
+                chartArea: { width: '90%', height: '80%' }
+            };
+
+            const chart = new google.visualization.PieChart(document.getElementById('duration_chart'));
+            chart.draw(dataTable, options);
+        }
+
+        function drawTimeChart(timeData) {
+            const dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('string', '時間選項');
+            dataTable.addColumn('number', '票數');
+
+            // Sort data to make the bar chart more readable (e.g., by week order)
+            const timeOrder = [
+                "5月第一週 (勞動節)", "5月第二週", "5月第三週", "5月第四週", 
+                "時間都可以", "其他時間", "未填寫"
+            ];
+            
+            const rows = timeOrder
+                .map(key => [key, timeData[key] || 0])
+                .filter(row => row[1] > 0); // Only include options that received votes
+            
+            dataTable.addRows(rows);
+
+            const options = {
+                title: '旅遊時間投票結果',
+                legend: { position: 'none' },
+                hAxis: { title: '票數', minValue: 0 },
+                vAxis: { title: '時間選項' },
+                colors: ['#059669'], // Green color for success/go
+                chartArea: { width: '65%', height: '80%' }
+            };
+
+            const chart = new google.visualization.BarChart(document.getElementById('time_chart'));
+            chart.draw(dataTable, options);
+        }
+
+    </script>
+</body>
+</html>
