@@ -68,7 +68,7 @@
         // IMPORTANT: PLEASE USE THE SAME DEPLOYED GOOGLE APPS SCRIPT URL HERE
         // 請務必替換成您的 Google Apps Script 執行網址 (結尾必須是 /exec)
         // 建議您檢查並確認您已使用正確的 /exec 網址取代下方字串
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJn7r4IKe0v1o302fcArEojlMdnQzz5B3A2zgNg54AKmVt7fcB2RLF1RKMvcTZ1aa9zw/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDrGqrypa3_2-eO8_sOK2rIt3-8WA9CIIKjcuZIVtHaEA6fnJ0p8lQqVOn7wB046bg/exec"; 
 
         // Load the Visualization API and the corechart package.
         google.charts.load('current', {'packages':['corechart', 'bar']});
@@ -80,7 +80,7 @@
         const chartContainers = document.getElementById('chartContainers');
         const totalSubmissionsElement = document.getElementById('totalSubmissions');
 
-        // Function to fetch data from the Apps Script GET endpoint (FIXED for non-JSON responses)
+        // Function to fetch data from the Apps Script GET endpoint (FIXED for trailing characters)
         async function fetchData() {
             // **FIX/Diagnostic: Check for /dev URL which causes "Failed to fetch"**
             if (GOOGLE_SCRIPT_URL.endsWith("/dev")) {
@@ -107,8 +107,19 @@
                     return null;
                 }
                 
+                // 處理 JSON 字串後面的多餘字元 (FIX: SyntaxError)
+                let cleanedText = rawText.trim();
+                const lastBraceIndex = cleanedText.lastIndexOf('}');
+
+                if (lastBraceIndex !== -1) {
+                    // 只擷取到最後一個大括號，以切除後面的所有非 JSON 字符
+                    cleanedText = cleanedText.substring(0, lastBraceIndex + 1);
+                } else {
+                    console.warn("Could not find a closing JSON brace. Attempting to parse full response.");
+                }
+
                 // 嘗試解析 JSON
-                const data = JSON.parse(rawText); 
+                const data = JSON.parse(cleanedText); 
                 return data;
 
             } catch (error) {
