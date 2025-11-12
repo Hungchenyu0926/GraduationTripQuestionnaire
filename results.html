@@ -54,7 +54,7 @@
             
         </div>
         
-        <!-- Raw Data Display Placeholder (Optional, for reference) -->
+        <!-- Location List Display -->
         <div class="mt-8 pt-4 border-t border-gray-200">
              <h2 class="text-xl font-bold text-gray-700 mb-3">地點許願列表 (前五名)</h2>
              <ul id="location_list" class="space-y-1 text-gray-700">
@@ -67,7 +67,8 @@
     <script>
         // IMPORTANT: PLEASE USE THE SAME DEPLOYED GOOGLE APPS SCRIPT URL HERE
         // 請務必替換成您的 Google Apps Script 執行網址 (結尾必須是 /exec)
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzcVCT7e3XyXc6F7xX7Zbonfk-R-O1pQA2zte3_KnDgL9BA4fRTKR-uiDdZF5X24RvXpQ/exec"; 
+        // 建議您檢查並確認您已使用正確的 /exec 網址取代下方字串
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJn7r4IKe0v1o302fcArEojlMdnQzz5B3A2zgNg54AKmVt7fcB2RLF1RKMvcTZ1aa9zw/exec"; 
 
         // Load the Visualization API and the corechart package.
         google.charts.load('current', {'packages':['corechart', 'bar']});
@@ -124,9 +125,12 @@
             
             if (!data || data.error) {
                 // statusMessage 已經在 fetchData 中處理
+                // 如果沒有數據，顯示圖表容器是沒有意義的
+                chartContainers.classList.add('hidden');
                 return;
             }
 
+            // 如果成功，隱藏狀態訊息，顯示圖表容器
             statusMessage.classList.add('hidden');
             chartContainers.classList.remove('hidden');
             
@@ -138,11 +142,8 @@
             // --- 繪製時間長條圖 ---
             drawTimeChart(data.time);
             
-            // --- 繪製地點列表（簡化版，只顯示前五名） ---
-            // 由於 Apps Script 的 doGet 專注於天數和時間，地點需要額外處理
-            // 在這裡先顯示一個友善的提示，讓使用者知道如何查看地點
-            document.getElementById('location_list').innerHTML = 
-                 `<li class="text-base text-indigo-600 font-medium">請直接查看 Google Sheet 獲得完整「地點」和「參考網址/行程」的建議。</li>`;
+            // --- 繪製地點許願列表 (新增) ---
+            drawLocationList(data.locations);
         }
 
         function drawDurationChart(durationData) {
@@ -194,6 +195,27 @@
 
             const chart = new google.visualization.BarChart(document.getElementById('time_chart'));
             chart.draw(dataTable, options);
+        }
+        
+        // Function to draw the Location List (New)
+        function drawLocationList(locationData) {
+            const listElement = document.getElementById('location_list');
+            listElement.innerHTML = ''; // 清除現有內容
+            
+            if (locationData.length === 0) {
+                listElement.innerHTML = '<li class="text-gray-500 italic">目前沒有地點許願數據。</li>';
+                return;
+            }
+            
+            locationData.forEach(([locationName, count], index) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'text-base font-medium flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0';
+                listItem.innerHTML = `
+                    <span class="text-gray-700">#${index + 1} ${locationName}</span>
+                    <span class="inline-flex items-center justify-center px-3 py-1 text-sm font-bold leading-none text-white bg-indigo-500 rounded-full">${count} 票</span>
+                `;
+                listElement.appendChild(listItem);
+            });
         }
 
     </script>
